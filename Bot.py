@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- encoding: utf-8 -*-
+__author__ = 'm.malinowski'
 """
 Project Bitcoin Course Tip Game
 
@@ -13,15 +14,18 @@ chat.freenode.net 6697  #keller1337 GameBot_Biibo
 import socket
 import time
 import sys
-
-
+from Game import *
 from Helper import get_btc_price
+
+HELP_TEXT = "the bot commands will be explained here"
+GAME_RULES = "the game rules will be explained here"
 
 
 class Bot:
 
     def __init__(self):
         self.irc_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.game = Game()  # todo hier muss die Zeile noch weg
         print('Socket created')
 
     def connect(self, server_ip, server_port, bot_nick, bot_nick_pass):
@@ -41,6 +45,8 @@ class Bot:
         # Join a channel
         self.irc_socket.send(bytes("JOIN " + channel + "\n", "UTF-8"))
         print("Channel:" + channel + " joined.")
+        welcoming = "Heyho, i am the GameBot Biibo. write .infos for details"
+        self.send_private_msg(channel, welcoming)
 
     def send_text(self, text):
         # Post a text in a channel
@@ -48,13 +54,7 @@ class Bot:
 
     def send_private_msg(self, channel, msg):
         # Transfer data
-        self.irc_socket.send(bytes("PRIVMSG " + channel + " " + msg + "\n", "UTF-8"))
-
-    def post_countdown(self, channel, timer):
-        # Post a countdown
-        self.irc_socket.send(bytes("PRIVMSG " + channel + " Timer:" + timer + "\n", "UTF-8"))
-        time.sleep(5)
-        self.irc_socket.send(bytes("PRIVMSG " + channel + " Timer:END" + timer + "\n", "UTF-8"))
+        self.irc_socket.send(bytes("PRIVMSG " + channel + " :" + msg + "\n", "UTF-8"))
 
     def get_text(self):
         # Get the text
@@ -66,12 +66,40 @@ class Bot:
 
         return text
 
-    def post_game_informations(self, channel):
-        # Post a countdown
+    def post_game_information(self, channel):
+        # Bot .info - Post the game infos
         text = "This is a BTC Tip Game ! (write .help for commands and .rule for the rules)"
-        self.irc_socket.send(bytes("PRIVMSG " + channel + " " + text + "\n", "UTF-8"))
+        self.send_private_msg(channel, text)
+
+    def post_game_help_or_rules(self, channel, what):
+        # Bot .help .rule - Post the Bot Commands or the game rules
+        if what == 0:
+            self.send_private_msg(channel, HELP_TEXT)
+        else:
+            self.send_private_msg(channel, GAME_RULES)
+
+
 
     def post_btc_price(self, channel):
         # Post a countdown
         price = get_btc_price()
-        self.irc_socket.send(bytes("PRIVMSG " + channel + " USD/BTC:" + price + "\n", "UTF-8"))
+        text = "USD/BTC:" + str(price)
+        self.send_private_msg(channel, text)
+
+
+    def post_countdown(self, channel, timer):
+        # Post a countdown
+        text = "Timer:" + timer
+        self.send_private_msg(channel, text)
+        time.sleep(5)
+        text = "TimerEnd:" + timer
+        self.send_private_msg(channel, text)
+
+    def create_game(self, channel):
+        self.game = Game("Tip Game", 15, 30, 10)
+        text = self.game.create_round()
+        text_two = "Game created"
+        self.send_private_msg(channel, text)
+        self.send_private_msg(channel, text_two)
+
+        return True
