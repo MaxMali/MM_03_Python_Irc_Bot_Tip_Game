@@ -7,3 +7,10 @@ This project was created as a subtask of the Data Science module of the Media In
 
 Written by Max M., 2020
 """
+
+
+class Player:
+
+    def __init__(self, nickname):
+        self.player_name = nickname
+
