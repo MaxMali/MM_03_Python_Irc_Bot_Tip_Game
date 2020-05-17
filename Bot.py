@@ -15,6 +15,9 @@ import time
 import sys
 
 
+from Helper import get_btc_price
+
+
 class Bot:
 
     def __init__(self):
@@ -62,3 +65,13 @@ class Bot:
             self.irc_socket.send(bytes('PONG ' + text.split()[1] + '\r\n', "UTF-8"))
 
         return text
+
+    def post_game_informations(self, channel):
+        # Post a countdown
+        text = "This is a BTC Tip Game ! (write .help for commands and .rule for the rules)"
+        self.irc_socket.send(bytes("PRIVMSG " + channel + " " + text + "\n", "UTF-8"))
+
+    def post_btc_price(self, channel):
+        # Post a countdown
+        price = get_btc_price()
+        self.irc_socket.send(bytes("PRIVMSG " + channel + " USD/BTC:" + price + "\n", "UTF-8"))
