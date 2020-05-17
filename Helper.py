@@ -1,11 +1,16 @@
 #!/usr/bin/python
 # -*- encoding: utf-8 -*-
+__author__ = 'm.malinowski'
 """
-Project local settings
+Project Bitcoin Course Tip Game
 
-Written by Max. M., 2020
+This project was created as a subtask of the Data Science module of the Media Informatics Master course.
+
+Written by Max M., 2020
 """
+
 import requests
+
 
 def get_btc_price():
     btc_api_url = 'https://blockchain.info/ticker'
