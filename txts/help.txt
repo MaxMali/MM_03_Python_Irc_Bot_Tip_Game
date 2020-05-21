@@ -1,0 +1,14 @@
+This are the Commands for the Bot Biibo \n
+--------------------------------------- \n
+hello - Bot says Hello! \n
+.info
+.btcprice
+.help
+.rule
+.startgame
+.start c
+---------------
+just for Admins
+---------------
+.checkin Password - Admin rights for the bot
+go away  - Kills the bot
