@@ -20,6 +20,7 @@ from Helper import get_btc_price
 HELP_TEXT = " ".join(open("txts/help.txt").readlines())
 GAME_RULES = open("txts/rules.txt").readlines()
 CHANNEL = "#keller1337"
+PASSWORD = "d435v3wc453"
 
 
 class Bot:
@@ -27,6 +28,7 @@ class Bot:
     def __init__(self):
         self.irc_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.game = Game()  # todo hier muss die Zeile noch weg
+        self.admins = ["Fals3lighT"]
         print(HELP_TEXT)
         print('Socket created')
 
@@ -78,7 +80,7 @@ class Bot:
         if what == 0:
             text = open("txts/help.txt", "r")
         else:
-            text = open("txts/help.txt", "r")
+            text = open("txts/rules.txt", "r")
         for lines in text:
             self.send_private_msg(channel, lines)
         text.close()
@@ -104,9 +106,31 @@ class Bot:
         text_two = "Game created"
         self.send_private_msg(channel, text)
         self.send_private_msg(channel, text_two)
-
         return True
 
+    '''
+    Admin functions
+    '''
+    def check_admin_user(self, user_name):
+        # Checks if a User has admin rights
+        if user_name in self.admins:
+            return True
+        else:
+            return False
+
+    def get_admin_rights(self,channel, user_name, password):
+        # Checks the password and give user rights
+        if password in PASSWORD:
+            self.admins.append(user_name)
+            self.send_private_msg(channel, "You got admins rights")
+        else:
+            self.send_private_msg(channel, "Bad password!!!")
+
+
+
+    '''
+    Bot command "interpreter" functions
+    '''
     def command(self, command):
         # Interpreting the irc commands
 
@@ -114,7 +138,7 @@ class Bot:
             self.send_private_msg(CHANNEL, "Hello!")
             return True
 
-        elif "go away" in command:
+        elif "go away!!" in command:
             self.close_connection()
             return False
 
@@ -133,6 +157,7 @@ class Bot:
         elif ".rule" in command:
             self.post_game_help_or_rules(CHANNEL, 1)
             return True
+
         elif ".startgame" in command:
             if self.create_game(CHANNEL):
                 self.send_private_msg(CHANNEL, "Game created!")
@@ -145,7 +170,7 @@ class Bot:
             self.post_countdown(CHANNEL, "30")
             return True
 
-
-
-
+        elif ".givemepower" in command:
+            self.get_admin_rights(CHANNEL, "let", "gudag9da")
+            return True
 
