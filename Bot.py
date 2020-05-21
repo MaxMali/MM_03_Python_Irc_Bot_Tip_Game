@@ -17,8 +17,8 @@ import sys
 from Game import *
 from Helper import get_btc_price
 
-HELP_TEXT = "the bot commands will be explained here"
-GAME_RULES = "the game rules will be explained here"
+HELP_TEXT = " ".join(open("txts/help.txt").readlines())
+GAME_RULES = open("txts/rules.txt").readlines()
 CHANNEL = "#keller1337"
 
 
@@ -27,6 +27,7 @@ class Bot:
     def __init__(self):
         self.irc_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.game = Game()  # todo hier muss die Zeile noch weg
+        print(HELP_TEXT)
         print('Socket created')
 
     def connect(self, server_ip, server_port, bot_nick, bot_nick_pass):
@@ -75,9 +76,12 @@ class Bot:
     def post_game_help_or_rules(self, channel, what):
         # Bot .help .rule - Post the Bot Commands or the game rules
         if what == 0:
-            self.send_private_msg(channel, HELP_TEXT)
+            text = open("txts/help.txt", "r")
         else:
-            self.send_private_msg(channel, GAME_RULES)
+            text = open("txts/help.txt", "r")
+        for lines in text:
+            self.send_private_msg(channel, lines)
+        text.close()
 
     def post_btc_price(self, channel):
         # Post a countdown
@@ -94,6 +98,7 @@ class Bot:
         self.send_private_msg(channel, text)
 
     def create_game(self, channel):
+        # Create a new Game
         self.game = Game("Tip Game", 15, 30, 10)
         text = self.game.create_round()
         text_two = "Game created"
@@ -103,6 +108,7 @@ class Bot:
         return True
 
     def command(self, command):
+        # Interpreting the irc commands
 
         if "hello" in command:
             self.send_private_msg(CHANNEL, "Hello!")
