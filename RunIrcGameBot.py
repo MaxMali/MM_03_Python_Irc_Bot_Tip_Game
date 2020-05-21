@@ -30,28 +30,15 @@ while loop:
     text = irc.get_text()
     print(text)
 
-    if "PRIVMSG" in text and channel in text and "hello" in text:
-        irc.send_private_msg(channel, "Hello!")
+    if "PRIVMSG" in text and channel in text:
 
-    if "PRIVMSG" in text and channel in text and "go away!!" in text:
-        irc.close_connection()
-        loop = False
+        command = text.rsplit(":")
+        loop = irc.command(command[2])
 
-    if "PRIVMSG" in text and channel in text and "start c" in text:
-        irc.post_countdown(channel, "30")
 
-    if "PRIVMSG" in text and channel in text and ".info" in text:
-        irc.post_game_information(channel)
 
-    if "PRIVMSG" in text and channel in text and ".btcprice" in text:
-        irc.post_btc_price(channel)
-    if "PRIVMSG" in text and channel in text and ".help" in text:
-        irc.post_game_help_or_rules(channel, 0)
-    if "PRIVMSG" in text and channel in text and ".rule" in text:
-        irc.post_game_help_or_rules(channel, 1)
 
-    if "PRIVMSG" in text and channel in text and ".startgame" in text:
-        if irc.create_game(channel):
-            irc.send_private_msg(channel, "Game created!")
-        else:
-            irc.send_private_msg(channel, "Game not created!")
+
+
+
+

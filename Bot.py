@@ -19,6 +19,7 @@ from Helper import get_btc_price
 
 HELP_TEXT = "the bot commands will be explained here"
 GAME_RULES = "the game rules will be explained here"
+CHANNEL = "#keller1337"
 
 
 class Bot:
@@ -78,14 +79,11 @@ class Bot:
         else:
             self.send_private_msg(channel, GAME_RULES)
 
-
-
     def post_btc_price(self, channel):
         # Post a countdown
         price = get_btc_price()
         text = "USD/BTC:" + str(price)
         self.send_private_msg(channel, text)
-
 
     def post_countdown(self, channel, timer):
         # Post a countdown
@@ -103,3 +101,45 @@ class Bot:
         self.send_private_msg(channel, text_two)
 
         return True
+
+    def command(self, command):
+
+        if "hello" in command:
+            self.send_private_msg(CHANNEL, "Hello!")
+            return True
+
+        elif "go away" in command:
+            self.close_connection()
+            return False
+
+        elif ".info" in command:
+            self.post_game_information(CHANNEL)
+            return True
+
+        elif ".btcprice" in command:
+            self.post_btc_price(CHANNEL)
+            return True
+
+        elif ".help" in command:
+            self.post_game_help_or_rules(CHANNEL, 0)
+            return True
+
+        elif ".rule" in command:
+            self.post_game_help_or_rules(CHANNEL, 1)
+            return True
+        elif ".startgame" in command:
+            if self.create_game(CHANNEL):
+                self.send_private_msg(CHANNEL, "Game created!")
+            else:
+                self.send_private_msg(CHANNEL, "Game not created!")
+            self.send_private_msg(CHANNEL, "Hello!")
+            return True
+
+        elif ".start c" in command:
+            self.post_countdown(CHANNEL, "30")
+            return True
+
+
+
+
+
