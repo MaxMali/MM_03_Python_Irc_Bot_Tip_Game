@@ -15,7 +15,7 @@ import socket
 import time
 import sys
 from Game import *
-from Helper import get_btc_price
+from Helper import *
 
 CHANNEL = "#keller1337"
 PASSWORD = "12344321"
@@ -55,7 +55,7 @@ class Bot:
 
     def send_private_msg(self, channel, msg):
         # Transfer data
-        self.irc_socket.send(bytes("PRIVMSG " + channel + " :" + msg + "\n", "UTF-8"))
+        self.irc_socket.send(bytes("PRIVMSG " + channel + " :" + str(msg) + "\n", "UTF-8"))
 
     def get_text(self):
         # Get the text
@@ -96,6 +96,21 @@ class Bot:
         text = "TimerEnd:" + timer
         self.send_private_msg(channel, text)
 
+    def start_countdown(self, channel, timer="1:20:20"):
+        # Pos a countdown
+        countdown_time=timer.split(":")
+        hours_to_seconds = int(countdown_time[0]) * 3600
+        minutes_to_seconds = int(countdown_time[1]) * 60
+        cd = int(countdown_time[2]) + hours_to_seconds + minutes_to_seconds
+        while cd > 0:
+            print(cd)
+            self.send_private_msg(channel, cd)
+            cd -= 1
+            time.sleep(1)
+        text = "Timer:" + str(timer)
+        self.send_private_msg(channel, text)
+
+
     def create_game(self, channel):
         # Create a new Game
         self.game = Game("Tip Game", 15, 30, 10)
@@ -120,7 +135,7 @@ class Bot:
         # Checks the password and give user rights
         if PASSWORD in bot_password:
             self.admins.append(user_name)
-            self.send_private_msg(channel, "You got admins rights, "+user_name+"!")
+            self.send_private_msg(channel, "You got admins rights, " + user_name + "!")
         else:
             self.send_private_msg(channel, "Bad password!!!")
 
@@ -148,6 +163,10 @@ class Bot:
 
         elif ".btcprice" in command:
             self.post_btc_price(CHANNEL)
+            return True
+
+        elif ".startc" in command:
+            self.start_countdown(CHANNEL, "1:10:10")
             return True
 
         elif ".help" in command:
